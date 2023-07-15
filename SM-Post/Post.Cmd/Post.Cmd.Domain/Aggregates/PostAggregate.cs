@@ -123,6 +123,7 @@ public class PostAggregate : AggregateRoot
         {
             Id = _id,
             CommentId = commentId,
+            Comment = comment,
             Username = username,
             EditDate = DateTime.Now
         });

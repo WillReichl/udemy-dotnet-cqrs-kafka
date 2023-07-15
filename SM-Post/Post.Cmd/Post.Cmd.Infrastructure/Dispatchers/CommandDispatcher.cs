@@ -1,7 +1,7 @@
 using CQRS.Core.Commands;
 using CQRS.Core.Infrastructure;
 
-namespace Post.Cmd.Infrastructure;
+namespace Post.Cmd.Dispatchers.Infrastructure;
 
 public class CommandDispatcher : ICommandDispatcher
 {
