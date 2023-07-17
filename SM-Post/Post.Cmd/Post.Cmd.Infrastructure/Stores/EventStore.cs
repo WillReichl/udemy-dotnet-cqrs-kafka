@@ -2,6 +2,7 @@ using CQRS.Core.Domain;
 using CQRS.Core.Events;
 using CQRS.Core.Exceptions;
 using CQRS.Core.Infrastructure;
+using CQRS.Core.Producers;
 using Post.Cmd.Domain.Aggregates;
 
 namespace Post.Cmd.Infrastructure.Stores;
@@ -9,10 +10,12 @@ namespace Post.Cmd.Infrastructure.Stores;
 public class EventStore : IEventStore
 {
     private readonly IEventStoreRepository _eventStoreRepository;
+    private readonly IEventProducer _eventProducer;
 
-    public EventStore(IEventStoreRepository eventStoreRepository)
+    public EventStore(IEventStoreRepository eventStoreRepository, IEventProducer eventProducer)
     {
         _eventStoreRepository = eventStoreRepository;
+        _eventProducer = eventProducer;
     }
 
     public async Task<List<BaseEvent>> GetEventsAsync(Guid aggregateId)
@@ -54,6 +57,17 @@ public class EventStore : IEventStore
             };
 
             await _eventStoreRepository.SaveAsync(eventModel);
+
+            var topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC");
+
+            if (topic == null)
+                throw new Exception("Failed to determine topic from environment variable");
+
+            await _eventProducer.ProduceAsync(topic, @event);
+
+            // NOTE: In reality, these two Save/Produce options should be wrapped in a single transaction that only commits
+            // if both operations are successful. However, because we are using only a single local instance of MongoDB,
+            // and MongoDB requires a "replica set" to support transactions, we are not implementing this now.
         }
     }
 }
