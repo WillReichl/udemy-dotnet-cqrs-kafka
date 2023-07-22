@@ -3,7 +3,7 @@ name: "udemy-event-sourcing"
 services:
   zookeeper:
     image: bitnami/zookeeper
-    restart: always
+    # restart: always
     ports:
       - "2181:2181"
     volumes:
@@ -14,7 +14,7 @@ services:
     image: bitnami/kafka
     ports:
       - "9092:9092"
-    restart: always
+    # restart: always
     volumes:
       - "kafka_data:/bitnami"
     environment:
@@ -28,11 +28,11 @@ services:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
     environment:
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: "Your_password"
+      MSSQL_SA_PASSWORD: "Your_password"
       MSSQL_PID: "Express"
     ports:
-      - "1433:1433"
-    restart: always
+      - "14330:1433"
+    # restart: always
   mongo-container:
     container_name: mongo-container
     image: mongo:latest
@@ -40,7 +40,7 @@ services:
       - "27017:27017"
     volumes:
       - "mongodb_data_container:/data/db"
-    restart: always
+    # restart: always
  
 volumes:
   zookeeper_data:
