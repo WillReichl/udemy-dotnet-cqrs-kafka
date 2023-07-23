@@ -28,7 +28,7 @@ public class CommentRepository : ICommentRepository
             .FirstOrDefaultAsync(comment => comment.CommentId == commentId);
     }
 
-    public async Task RemoveAsync(Guid commentId)
+    public async Task DeleteAsync(Guid commentId)
     {
         using var context = _databaseContextFactory.CreateDbContext();
         var comment = await GetByIdAsync(commentId);
