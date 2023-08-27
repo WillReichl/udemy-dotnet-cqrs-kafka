@@ -15,5 +15,6 @@ public class CommentEntity
     public bool Edited { get; set; }
     public Guid PostId { get; set; }
     [JsonIgnore]
+    [ForeignKey(nameof(PostId))]
     public virtual PostEntity PostEntity { get; set; }
 }

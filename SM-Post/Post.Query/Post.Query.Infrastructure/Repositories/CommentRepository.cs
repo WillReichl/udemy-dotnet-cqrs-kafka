@@ -17,6 +17,8 @@ public class CommentRepository : ICommentRepository
     public async Task CreateAsync(CommentEntity comment)
     {
         using var context = _databaseContextFactory.CreateDbContext();
+        var post = await context.Posts.FindAsync(comment.PostId) ?? throw new Exception("Could not locate post by comment's post ID");
+        comment.PostEntity = post;
         context.Comments.Add(comment);
         _ = await context.SaveChangesAsync();
     }
