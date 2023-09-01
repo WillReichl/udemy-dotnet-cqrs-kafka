@@ -26,27 +26,12 @@ public class PostLookupController : ControllerBase
         try
         {
             var posts = await _queryDispatcher.SendAsync(new FindAllPostsQuery());
-
-            if (posts == null || !posts.Any())
-                return NoContent();
-
-            var count = posts.Count;
-
-            return Ok(new PostLookupResponse
-            {
-                Posts = posts,
-                Message = $"Successfully returns {count} post{(count > 1 ? "s" : string.Empty)}!"
-            });
+            return NormalResponse(posts);
         }
         catch (Exception ex)
         {
             const string SafeErrorMessage = "Error while processing request to retrieve all posts!";
-            _logger.LogError(ex, SafeErrorMessage);
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse
-            {
-                Message = SafeErrorMessage
-            });
+            return ErrorResponse(ex, SafeErrorMessage);
         }
     }
 
@@ -56,27 +41,81 @@ public class PostLookupController : ControllerBase
         try
         {
             var posts = await _queryDispatcher.SendAsync(new FindPostByIdQuery { Id = postId });
-
-            if (posts == null || !posts.Any())
-                return NoContent();
-
-            var count = posts.Count;
-
-            return Ok(new PostLookupResponse
-            {
-                Posts = posts,
-                Message = $"Successfully returned post!"
-            });
+            return NormalResponse(posts);
         }
         catch (Exception ex)
         {
             const string SafeErrorMessage = "Error while processing request to retrieve post by ID!";
-            _logger.LogError(ex, SafeErrorMessage);
-
-            return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse
-            {
-                Message = SafeErrorMessage
-            });
+            return ErrorResponse(ex, SafeErrorMessage);
         }
+    }
+
+    [HttpGet("byAuthor/{author}")]
+    public async Task<ActionResult> GetByAuthorAsync(string author)
+    {
+        try
+        {
+            var posts = await _queryDispatcher.SendAsync(new FindPostsByAuthorQuery { Author = author });
+            return NormalResponse(posts);
+        }
+        catch (Exception ex)
+        {
+            const string SafeErrorMessage = "Error while processing request to retrieve all posts by author!";
+            return ErrorResponse(ex, SafeErrorMessage);
+        }
+    }
+
+    [HttpGet("withComments")]
+    public async Task<ActionResult> GetPostsWithCommentsAsync()
+    {
+        try
+        {
+            var posts = await _queryDispatcher.SendAsync(new FindPostsWithCommentsQuery());
+            return NormalResponse(posts);
+        }
+        catch (Exception ex)
+        {
+            const string SafeErrorMessage = "Error while processing request to retrieve all posts by author!";
+            return ErrorResponse(ex, SafeErrorMessage);
+        }
+    }
+
+    [HttpGet("withLikes/{numberOfLikes}")]
+    public async Task<ActionResult> GetPostsWithLikesAsync(int numberOfLikes)
+    {
+        try
+        {
+            var posts = await _queryDispatcher.SendAsync(new FindPostsWithLikesQuery { NumberOfLikes = numberOfLikes });
+            return NormalResponse(posts);
+        }
+        catch (Exception ex)
+        {
+            const string SafeErrorMessage = "Error while processing request to retrieve all posts by author!";
+            return ErrorResponse(ex, SafeErrorMessage);
+        }
+    }
+
+    private ActionResult ErrorResponse(Exception ex, string safeErrorMessage)
+    {
+        _logger.LogError(ex, safeErrorMessage);
+
+        return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse
+        {
+            Message = safeErrorMessage
+        });
+    }
+
+    private ActionResult NormalResponse(List<PostEntity> posts)
+    {
+        if (posts == null || !posts.Any())
+            return NoContent();
+
+        var count = posts.Count;
+
+        return Ok(new PostLookupResponse
+        {
+            Posts = posts,
+            Message = $"Successfully returns {count} post{(count > 1 ? "s" : string.Empty)}!"
+        });
     }
 }

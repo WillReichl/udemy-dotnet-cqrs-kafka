@@ -36,6 +36,7 @@ public class PostRepository : IPostRepository
     {
         using var context = _databaseContextFactory.CreateDbContext();
         return await context.Posts
+            .Where(post => post.PostId == postId)
             .Include(post => post.Comments)
             .FirstOrDefaultAsync();
     }
