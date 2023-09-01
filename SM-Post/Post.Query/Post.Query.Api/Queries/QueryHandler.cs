@@ -20,7 +20,8 @@ public class QueryHandler : IQueryHandler
     public async Task<List<PostEntity>> HandleAsync(FindPostByIdQuery query)
     {
         var post = await _postRepository.GetByIdAsync(query.Id);
-        return new List<PostEntity> { post };
+        var posts = (post == null) ? new List<PostEntity>() : new List<PostEntity> { post };
+        return posts;
     }
 
     public async Task<List<PostEntity>> HandleAsync(FindPostsByAuthorQuery query)
