@@ -18,3 +18,15 @@ https://app.diagrams.net/#G18-djczO-0VAlckEuS0t7JSz3i90VWTbO
     - We only implement the read-replica consumer in this course, but this illustrates the behavior of multiple consumers of one producer
     - Sequence is important!
     - Consumers track their offset by consumer group
+
+## Quickstart
+
+* Open VS Code
+* Open terminal
+* Run docker compose file: `docker compose up -d`
+* Run project: "Post.Cmd.Api"
+* Open Command API swagger: http://localhost:5010/swagger/index.html
+* Create a new Post
+* Run project: "Post.Query.Api"
+* Open Query API swagger: http://localhost:5011/swagger/index.html
+* If you would like to see the DB representations, create DB connections in your SQL/MongoDB clients of choice
