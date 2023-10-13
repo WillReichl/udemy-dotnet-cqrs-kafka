@@ -22,7 +22,7 @@ builder.Services.AddSingleton<DatabaseContextFactory>(new DatabaseContextFactory
 
 // Create database and tables from code
 var dataContext = builder.Services.BuildServiceProvider().GetRequiredService<DatabaseContext>();
-dataContext.Database.EnsureDeleted();  // uncomment to clear database
+// dataContext.Database.EnsureDeleted();  // uncomment to clear database
 dataContext.Database.EnsureCreated();
 
 builder.Services.AddScoped<IPostRepository, PostRepository>();
